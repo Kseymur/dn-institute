@@ -7,7 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     name: "Checks if a new article matches Hugo SSG format and other requirements"
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: formatting_checker
 
       - name: Cache Python
         uses: actions/cache@v3
