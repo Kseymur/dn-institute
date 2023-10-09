@@ -2,44 +2,36 @@ on:
   issue_comment:
     types: [created]
 
-permissions:
-  contents: read
-  issues: read
-  pull-requests: write
-
 jobs:
-  permission-check-job:
-    runs-on: ubuntu-latest
-    if: |
-      github.event.issue.pull_request &&
-      contains(github.event.comment.body, '/formatcheck')
-    outputs:
-      permission: ${{ steps.permissions-check.outputs.defined }}
-    steps:
-      - name: Check for Secret availability
-        id: permissions-check
-        shell: bash
-        run: |
-          echo "defined=${{ contains(fromJSON(secrets.WIKI_REVIEWERS), github.actor) }}" >> $GITHUB_OUTPUT;
-
   format-check:
     runs-on: ubuntu-latest
-    name: "Checks if a new article matches Hugo SSG format and other requirements"
-    needs: [permission-check-job]
-    if: needs.permission-check-job.outputs.permission == 'true'
     steps:
-      - uses: actions/checkout@v3
+      - name: Check if comment contains /formatcheck
+        id: check-comment
+        run: |
+          if [[ ${{ github.event.comment.body }} == *"/formatcheck"* ]]; then
+            echo "Comment contains /formatcheck"
+            echo "::set-output name=run-check::true"
+          else
+            echo "Comment does not contain /formatcheck"
+            echo "::set-output name=run-check::false"
+          fi
 
-      - name: Cache Python
-        uses: actions/cache@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          python-version: 3.x
 
-      - name: Install package
-        run: pipx install poetry && poetry install --no-interaction
+      - name: Install Poetry and dependencies
+        run: |
+          pip install poetry
+          poetry install --no-interaction
 
-      - name: Run script
+      - name: Run format check
+        if: steps.check-comment.outputs.run-check == 'true'
         run: |
           poetry run format-check \
             --pull-url "${{ github.event.issue.pull_request.url }}" \
