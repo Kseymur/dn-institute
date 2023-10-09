@@ -5,36 +5,23 @@ on:
 jobs:
   format-check:
     runs-on: ubuntu-latest
+    name: "Checks if a new article matches Hugo SSG format and other requirements"
     steps:
-      - name: Check if comment contains /formatcheck
-        id: check-comment
-        run: |
-          if [[ ${{ github.event.comment.body }} == *"/formatcheck"* ]]; then
-            echo "Comment contains /formatcheck"
-            echo "::set-output name=run-check::true"
-          else
-            echo "Comment does not contain /formatcheck"
-            echo "::set-output name=run-check::false"
-          fi
+      - uses: actions/checkout@v3
 
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Cache Python
+        uses: actions/cache@v3
         with:
-          python-version: 3.x
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
 
-      - name: Install Poetry and dependencies
-        run: |
-          pip install poetry
-          poetry install --no-interaction
+      - name: Install package
+        run: pipx install poetry && poetry install --no-interaction
 
-      - name: Run format check
-        if: steps.check-comment.outputs.run-check == 'true'
+      - name: Run script
         run: |
           poetry run format-check \
             --pull-url "${{ github.event.issue.pull_request.url }}" \
-            --github-token "${{ secrets.TOKEN }}" \
+            --github-token "${{ secrets.GITHUB_TOKEN }}" \
             --openai-key "${{ secrets.OPENAI_KEY }}" \
             --content-path "content"
