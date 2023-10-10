@@ -1,35 +1,31 @@
+name: Create PR Comment on /formatcheck
+
 on:
   issue_comment:
     types: [created]
 
-permissions:
-  contents: read
-  issues: read
-  pull-requests: write
-
 jobs:
-  format-check:
+  create-comment:
     runs-on: ubuntu-latest
-    if: |
-      github.event.issue.pull_request &&
-      contains(github.event.comment.body, '/formatcheck')
-    name: "Checks if a new article matches Hugo SSG format and other requirements"
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Cache Python
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install package
-        run: pipx install poetry && poetry install --no-interaction
-
-      - name: Run script
+      - name: Check for /formatcheck in comment
+        id: check-comment
         run: |
-          poetry run format-check \
-            --pull-url "${{ github.event.issue.pull_request.url }}" \
-            --github-token "${{ secrets.TOKEN }}" \
-            --openai-key "${{ secrets.OPENAI_KEY }}" \
-            --content-path "content"
+          if [[ "${{ github.event.comment.body }}" == *"/formatcheck"* ]]; then
+            echo "Comment contains /formatcheck."
+            echo "::set-output name=contains_formatcheck::true"
+          else
+            echo "Comment does not contain /formatcheck."
+            echo "::set-output name=contains_formatcheck::false"
+          fi
+
+      - name: Create Comment
+        if: steps.check-comment.outputs.contains_formatcheck == 'true'
+        run: |
+          echo "Hello from GitHub Actions in response to /formatcheck!" > comment.txt
+          gh pr comment ${{ github.event.issue.number }} --body "$(cat comment.txt)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
