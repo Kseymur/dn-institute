@@ -19,6 +19,15 @@ jobs:
       - name: Install package
         run: pipx install poetry && poetry install --no-interaction
 
+      - name: Check if the comment contains "/formatcheck"
+        run: |
+          if [[ "${{ github.event.comment.body }}" == *"/formatcheck"* ]]; then
+            echo "The comment contains '/formatcheck'. Continuing..."
+          else
+            echo "The comment does not contain '/formatcheck'. Exiting..."
+            exit 0
+          fi
+
       - name: Run script
         run: |
           poetry run format-check \
