@@ -1,0 +1,30 @@
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '/formatcheck')
+    name: "Checks if a new article matches Hugo SSG format and other requirements"
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache Python
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install package
+        run: pipx install poetry && poetry install --no-interaction
+
+      - name: Run script
+        run: |
+          poetry run format-check \
+            --pull-url "${{ github.event.issue.pull_request.url }}" \
+            --github-token "${{ secrets.GITHUB_TOKEN }}" \
+            --openai-key "${{ secrets.OPENAI_KEY }}" \
+            --content-path "content"
