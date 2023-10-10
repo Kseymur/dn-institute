@@ -1,0 +1,31 @@
+name: Create PR Comment on /formatcheck
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  create-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check for /formatcheck in comment
+        id: check-comment
+        run: |
+          if [[ "${{ github.event.comment.body }}" == *"/formatcheck"* ]]; then
+            echo "Comment contains /formatcheck."
+            echo "::set-output name=contains_formatcheck::true"
+          else
+            echo "Comment does not contain /formatcheck."
+            echo "::set-output name=contains_formatcheck::false"
+          fi
+
+      - name: Create Comment
+        if: steps.check-comment.outputs.contains_formatcheck == 'true'
+        run: |
+          echo "Hello from GitHub Actions in response to /formatcheck!" > comment.txt
+          gh pr comment ${{ github.event.issue.number }} --body "$(cat comment.txt)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
