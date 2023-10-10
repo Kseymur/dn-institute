@@ -25,6 +25,6 @@ jobs:
         run: |
           poetry run format-check \
             --pull-url "${{ github.event.issue.pull_request.url }}" \
-            --github-token "${{ secrets.GITHUB_TOKEN }}" \
+            --github-token "${{ secrets.TOKEN }}" \
             --openai-key "${{ secrets.OPENAI_KEY }}" \
             --content-path "content"
