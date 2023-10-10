@@ -9,8 +9,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          ref: formatting_checker
 
       - name: Cache Python
         uses: actions/cache@v3
@@ -25,6 +23,6 @@ jobs:
         run: |
           poetry run format-check \
             --pull-url "${{ github.event.issue.pull_request.url }}" \
-            --github-token "${{ secrets.GITHUB_TOKEN }}" \
+            --github-token "${{ secrets.TOKEN }}" \
             --openai-key "${{ secrets.OPENAI_KEY }}" \
             --content-path "content"
