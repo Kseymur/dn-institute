@@ -29,7 +29,7 @@ Where:
 
 ## Crypto Context
 
-In the world of cryptocurrency trading, the Volume-Volatility Correlation metric is essential for monitoring market behavior. This indicator was integrated into various Crypto Exchnage Benchmarking [reports](https://cointelegraph.com/news/cryptocompare-launches-exchange-benchmark-in-response-to-concerns-over-false-volume-reporting). According to the industry background, those exchanges that steadily show Volume-Volatility correlation less than 0.4 are considered as market venues with potentialled inflated volume. 
+In the world of cryptocurrency trading, the Volume-Volatility Correlation metric is essential for monitoring market behavior. This indicator was integrated into various Crypto Exchnage Benchmarking [reports](https://cointelegraph.com/news/cryptocompare-launches-exchange-benchmark-in-response-to-concerns-over-false-volume-reporting). According to the industry background, those exchanges that steadily show Volume-Volatility correlation less than 0.4 are considered as market venues with potentialled inflated volume.
 
 ## Usage Examples
 
@@ -46,4 +46,3 @@ Incorporate graphs displaying the correlation between trading volume and volatil
 ## References and Further Reading
 
 - [Price-volume Correlation Analysis of Crypto Markets](https://hacken.io/discover/price-volume-correlation-analysis-of-the-crypto-market/)
-
