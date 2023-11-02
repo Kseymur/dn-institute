@@ -36,6 +36,7 @@ $130M USD
 - **November 9, 2022:** Immunefi [published hack analysis](https://medium.com/immunefi/hack-analysis-cream-finance-oct-2021-fc222d913fc5)
 
 ## Security Failure Causes
+
 - **Uncapped Token Supply:** Cream Finance allowed users to supply tokens without strict limits, making it susceptible to manipulation. The attacker leveraged this design flaw by repeatedly supplying the same asset, artificially inflating the collateral value and triggering additional borrowing capacity.
 - **Oracle Vulnerability:** The use of an easily manipulatable hybrid oracle exacerbated the attack. The oracle, based on the Yearn 4-Curve pool's assets, allowed the attacker to double the value of certain tokens, leading to significant distortions in the protocol's health calculations. The protocol relied on this oracle to determine the value of collateral and borrowed tokens.
 - **Lack of Reentrancy Guard:** Cream Finance lacked a protocol-level reentrancy guard, leaving it vulnerable to reentrancy attacks. This deficiency enabled the attacker to execute a series of complex transactions with precision.
