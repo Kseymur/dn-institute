@@ -19,7 +19,7 @@ Ratios significantly deviating from equilibrium time can hint at a market bias t
 
 where
 {{< katex display >}}
-n = \sum(volume_{id}) \text{ if } side_{id} = \text{buy}, m = \sum(volume_{id})
+n = \sum(volume*{id}) \text{ if } side*{id} = \text{buy}, m = \sum(volume\_{id})
 {{< /katex >}}
 
 ## Crypto Context

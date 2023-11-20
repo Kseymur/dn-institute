@@ -21,9 +21,11 @@ Between March 14 and April 9, 2016, the Swiss-based cryptocurrency exchange, Sha
 The security incident at ShapeShift was attributed to an internal exchange employee, whose identity remains undisclosed, in collaboration with an external threat actor operating under the pseudonym "Rovion."
 
 Exchange employee wallet:
+
 - **BTC:** [1LchKFYxkugq3EPMoJJp5cvUyTyPMu1qBR](https://www.blockchain.com/en/explorer/addresses/btc/1LchKFYxkugq3EPMoJJp5cvUyTyPMu1qBR)
 
 Hacker wallets:
+
 - **BTC:** [14Kt9i5MdQCKvjX6HS2hEevVgbPhK13SKD](https://www.blockchain.com/explorer/addresses/btc/14Kt9i5MdQCKvjX6HS2hEevVgbPhK13SKD)
 - **ETH:** [0xC26B321d50910f2f990EF92A8Effd8EC38aDE8f5](https://etherscan.io/address/0xC26B321d50910f2f990EF92A8Effd8EC38aDE8f5)
 - **LTC:** [LL9jqgXVqxUbWbWVaJocBcF9Vm8uS3NaTd](https://blockchair.com/litecoin/address/LL9jqgXVqxUbWbWVaJocBcF9Vm8uS3NaTd)

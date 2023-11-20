@@ -9,7 +9,7 @@ weight: 40
 
 The trade size distribution is a straightforward way to visually represent the sizes of executed transactions and the number of occurences in a histogram. To gain insights into these distributions and identify any unusual or manipulative activities, various statistical metrics like kurtosis, mean, median, mode, skewness, and standard deviation are analyzed.
 
-Another approach involves using the [power law](https://en.wikipedia.org/wiki/Power_law) to describe a phenomenon where a small number of items are concentrated at the top of a distribution. In simpler terms, this suggests that medium to small retail transactions are frequent, while large "whale" orders are rare. 
+Another approach involves using the [power law](https://en.wikipedia.org/wiki/Power_law) to describe a phenomenon where a small number of items are concentrated at the top of a distribution. In simpler terms, this suggests that medium to small retail transactions are frequent, while large "whale" orders are rare.
 
 The Power Law is expressed mathematically as:
 
@@ -29,7 +29,7 @@ In cases of potential wash trading, certain trading patterns, such as an unusual
 
 Consider the API metrics:
 
-- `volume_distribution`: The provided data structure will help building the histogram and conducting the visual analysis. 
+- `volume_distribution`: The provided data structure will help building the histogram and conducting the visual analysis.
 - `volume_distribution_kurtosis`: A value of `3.58703` signals a heavy-tailed distribution, indicating a higher likelihood of extreme values.
 - `volume_distribution_mean`: A value of `0.38137`, being less than the `volume_distribution_median` of `0.64753`, points to a right-skewed distribution.
 - `volume_distribution_skewness`: A value of `1.02254` indicates a moderate positive skewness, meaning more small trades than large ones, but the large trades can be very large.
