@@ -8,25 +8,13 @@ permissions:
   pull-requests: write
 
 jobs:
-  permission-check-job:
-    runs-on: ubuntu-latest
-    if: |
-      github.event.issue.pull_request &&
-      contains(github.event.comment.body, '/factcheck')
-    outputs:
-      permission: ${{ steps.permissions-check.outputs.defined }}
-    steps:
-      - name: Check for Secret availability
-        id: permissions-check
-        shell: bash
-        run: |
-          echo "defined=${{ contains(fromJSON(secrets.WIKI_REVIEWERS), github.actor) }}" >> $GITHUB_OUTPUT;
-
   fact-check:
     runs-on: ubuntu-latest
     name: "Verify statements in content diff for truthness"
     needs: [ permission-check-job ]
-    if: needs.permission-check-job.outputs.permission == 'true'
+    if: |
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '/factcheck')    
     steps:
       - uses: actions/checkout@v3
 
@@ -44,4 +32,5 @@ jobs:
           poetry run article-check \
             --pull-url "${{ github.event.issue.pull_request.url }}" \
             --github-token "${{ secrets.GITHUB_TOKEN }}" \
-            --llm-api-key "${{ secrets.LLM_API_KEY }}"
+            --api-key "${{ secrets.LLM_API_KEY }}"  \
+            --search-api-key "${{ secrets.SEARCH_API_KEY }}"
