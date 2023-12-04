@@ -179,7 +179,7 @@ Text for Verification: ```%s```
 
 def main():
     args = parse_cli_args()
-    with open('config.json', 'r') as config_file:
+    with open('tools/config.json', 'r') as config_file:
         config = json.load(config_file)
 
     search_tool = BraveSearchTool(brave_api_key=args.SEARCH_API_KEY, summarize_with_claude=True,
