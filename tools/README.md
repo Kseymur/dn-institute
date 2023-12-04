@@ -15,7 +15,7 @@ _e.g._ `/payout -r 1 -x 2`
 
 ## Quality Check
 
-`/qualitycheck`
+`/articlecheck`
 
 It is a python script that takes command-line arguments with API keys and a link to a GitHub pull request. The script then extracts the diff from the pull request and sends it to an AI service with a prompt. The response from the AI service is converted by the script into JSON, and then based on this JSON, a comment is created for the pull request. Everything works in the GitHub Actions environment.
 
