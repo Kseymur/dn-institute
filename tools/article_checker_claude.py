@@ -60,8 +60,8 @@ def create_comment_on_pr(pull_request, answer):
         comment = generate_comment(answer)
         print(comment)
         # only post comment if running on Github Actions
-        if os.environ.get("GITHUB_ACTIONS") == "true":
-            pull_request.create_issue_comment(comment)
+        #if os.environ.get("GITHUB_ACTIONS") == "true":
+        pull_request.create_issue_comment(comment)
     except Exception as e:
         print(f"Error creating a comment on PR: {e}")
 

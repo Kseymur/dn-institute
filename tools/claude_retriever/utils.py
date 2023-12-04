@@ -3,7 +3,7 @@ import aiohttp
 from typing import Optional
 from bs4 import BeautifulSoup
 import anthropic
-from anthropic import AsyncAnthropic
+from anthropic import Anthropic, AsyncAnthropic
 import logging
 
 logger = logging.getLogger(__name__)
