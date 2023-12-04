@@ -10,7 +10,7 @@ from github import Github
 from tools.git import get_pull_request, get_diff_by_url, parse_diff
 from tools.utils import logging_decorator
 from tools.content_parsers import extract_json, remove_plus
-import claude_retriever
+import tools.claude_retriever
 from claude_retriever.searcher.searchtools.websearch import BraveSearchTool
 
 
