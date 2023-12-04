@@ -1,7 +1,7 @@
 import os
 from typing import Optional
-from claude_retriever.searcher.types import SearchResult, SearchTool
-from claude_retriever.utils import scrape_url
+from tools.claude_retriever.searcher.types import SearchResult, SearchTool
+from tools.claude_retriever.utils import scrape_url
 from dataclasses import dataclass
 import requests
 import asyncio
