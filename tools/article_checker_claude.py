@@ -23,7 +23,7 @@ def parse_cli_args():
         "--github-token", dest="github_token", help="GitHub token", required=True
     )
     parser.add_argument(
-        "--api-key", dest="API_key", help="API key", required=True
+        "--llm-api-key", dest="API_key", help="API key", required=True
     )
     parser.add_argument(
         "--pull-url", dest="pull_url", help="GitHub pull URL", required=True
