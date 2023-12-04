@@ -60,8 +60,8 @@ def create_comment_on_pr(pull_request, answer):
         comment = generate_comment(answer)
         print(comment)
         # only post comment if running on Github Actions
-        #if os.environ.get("GITHUB_ACTIONS") == "true":
-        pull_request.create_issue_comment(comment)
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            pull_request.create_issue_comment(comment)
     except Exception as e:
         print(f"Error creating a comment on PR: {e}")
 
@@ -197,10 +197,10 @@ def main():
     print('-' * 50)
 
 
-    text = remove_plus(diff[0]['body'][0]['body'])
+    text = remove_plus(diff[0]['header'] + diff[0]['body'][0]['body'])
 
     print('-' * 50)
-    print(PROMPT % text)
+    print(text)
     print('-' * 50)
 
     query = PROMPT % text
@@ -217,5 +217,5 @@ def main():
     create_comment_on_pr(pr, extracted_answer)
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
