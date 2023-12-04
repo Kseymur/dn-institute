@@ -185,7 +185,7 @@ def main():
     search_tool = BraveSearchTool(brave_api_key=args.SEARCH_API_KEY, summarize_with_claude=True,
                                   anthropic_api_key=args.API_key)
     model = config['ANTHROPIC_SEARCH_MODEL']
-    client = claude_retriever.ClientWithRetrieval(api_key=args.API_key, search_tool=search_tool)
+    client = tools.claude_retriever.ClientWithRetrieval(api_key=args.API_key, search_tool=search_tool)
 
     github = Github(args.github_token)
     pr = get_pull_request(github, args.pull_url)
