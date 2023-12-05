@@ -1,5 +1,9 @@
 #!/bin/env python
 
+"""
+The bot checks if a new article complies with all requirements
+"""
+
 import argparse
 import os
 import sys
@@ -217,5 +221,5 @@ def main():
     create_comment_on_pr(pr, extracted_answer)
 
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
