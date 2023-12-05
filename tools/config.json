@@ -5,5 +5,5 @@
     "GPT_MODEL": "gpt-3.5-turbo",
     "GPT_retry": 3,
     "GPT_temperature": 0,
-    "GPT_max_tokens": 2000
+    "GPT_max_tokens": 500
 }

@@ -17,6 +17,7 @@ import requests
 
 from tools.content_parsers import remove_plus
 from tools.git import get_pull_request, get_diff_by_url, parse_diff
+from tools.utils import logging_decorator
 
 
 def parse_cli_args():
@@ -81,6 +82,9 @@ def new_text_handler(diff):
         target = target_entities
     else:
         print("Value 'target-entities' didn't find")
+
+    new_text = re.search(r'## Summary.*', new_text, re.DOTALL)
+    new_text = new_text.group(0)
     return new_text, target
 
 
@@ -138,9 +142,36 @@ def check_old_texts(href_list, url, new_text, prompt, config):
             old_text = soup.get_text()
             old_text = re.search(r'Summary\n#.*', old_text, re.DOTALL)
             old_text = old_text.group(0)
-            print(old_text)
-            # ans = openai_call(prompt%(new_text, old_text), config)
-    return "LAla"
+            ans = openai_call(prompt%(new_text, old_text), config)
+            obj = json.loads(ans)
+            if obj["have_same_article"]:
+               have_same_article = True
+               return ":x:"
+    return ":white_check_mark:"
+
+
+@logging_decorator("Comment on PR")
+def create_comment_on_pr(pull_request, answer):
+    """
+    Create and post a comment on a Github pull request.
+    """
+    try:
+        comment = generate_comment(answer)
+        print(comment)
+        # only post comment if running on Github Actions
+        #if os.environ.get("GITHUB_ACTIONS") == "true":
+        pull_request.create_issue_comment(comment)
+    except Exception as e:
+        print(f"Error creating a comment on PR: {e}")
+
+
+def generate_comment(answer):
+    """
+    Generate a formatted comment based on the provided answer
+    """
+    comment = "## Duplication checker\n\n"
+    comment += f"Is this a new article for Crypto wiki? {answer}\n\n"
+    return comment
 
 
 PROMPT = """Compare two texts and say if they are the same.
@@ -179,7 +210,11 @@ def main():
     print('-' * 50)
     print(href_list)    
     print('-' * 50)
-    check_old_texts(href_list, 'https://dn.institute', new_text, PROMPT, config)
+    answer = check_old_texts(href_list, 'https://dn.institute', new_text, PROMPT, config)
+    print('-' * 50)
+    print(answer)
+    print('-' * 50)
+    create_comment_on_pr(pr, answer)
 
 
 if __name__ == '__main__':
