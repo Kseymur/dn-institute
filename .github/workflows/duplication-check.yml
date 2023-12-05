@@ -5,10 +5,10 @@ on:
 jobs:
   fact-check:
     runs-on: ubuntu-latest
-    name: "Verify statements in content diff for truthness"
+    name: "Checks for duplication in PRs"
     if: |
       github.event.issue.pull_request &&
-      contains(github.event.comment.body, '/duplcheck')    
+      contains(github.event.comment.body, '/duplecheck')    
     steps:
       - uses: actions/checkout@v3
 
