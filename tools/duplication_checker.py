@@ -14,9 +14,8 @@ from github import Github
 import openai
 from bs4 import BeautifulSoup
 import requests
-import tiktoken
 
-from tools.content_parsers import remove_plus
+from tools.llm_utils import remove_plus, count_tokens, trimming_text
 from tools.git import get_pull_request, get_diff_by_url, parse_diff
 from tools.utils import logging_decorator
 
@@ -36,11 +35,6 @@ def parse_cli_args():
         "--pull-url", dest="pull_url", help="GitHub pull URL", required=True
     )
     return parser.parse_args()
-
-
-def count_tokens(text):
-    encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
-    return len(encoding.encode(text))
 
 
 def openai_call(prompt: str, config, retry: int = None):
@@ -151,18 +145,8 @@ def check_old_texts(href_list, url, new_text, prompt, config):
             amount_of_tokens = count_tokens(prompt%(new_text, old_text))
             if amount_of_tokens > config["max_tokens"]:
                 threshold = amount_of_tokens / 2
-                token_count1 = count_tokens(new_text)
-                while token_count1 > threshold:
-                    tokens = new_text.split()
-                    tokens = tokens[:-1]
-                    new_text = ' '.join(tokens)
-                    token_count1 = count_tokens(new_text)
-                token_count2 = count_tokens(old_text)
-                while token_count2 > threshold:
-                    tokens = old_text.split()
-                    tokens = tokens[:-1]
-                    old_text = ' '.join(tokens)
-                    token_count2 = count_tokens(old_text)
+                new_text = trimming_text(new_text, threshold)
+                old_text = trimming_text(old_text, threshold)
             query = prompt % (new_text, old_text)
             ans = openai_call(query, config)
             obj = json.loads(ans)
@@ -218,22 +202,12 @@ def main():
     _diff = get_diff_by_url(pr)
     diff = parse_diff(_diff)
     new_text, target = new_text_handler(diff)
-    print('-' * 50)
-    print(new_text)
-    print('-' * 50)
-    print('-' * 50)
-    print(target)
-    print('-' * 50)
     list_of_target_entities = get_list_of_target_entities('https://dn.institute/attacks/posts/target-entities/')
-    print('-' * 50)
-    print(list_of_target_entities)
-    print('-' * 50)
     href_list = get_same_texts(target, 'https://dn.institute/attacks/posts/target-entities/', list_of_target_entities)
-    print('-' * 50)
-    print(href_list)    
-    print('-' * 50)
     answer = check_old_texts(href_list, 'https://dn.institute', new_text, PROMPT, config)
-    print('-' * 50)
     print(answer)
-    print('-' * 50)
     create_comment_on_pr(pr, answer)
+
+
+if __name__ == "__main__":
+    main()
