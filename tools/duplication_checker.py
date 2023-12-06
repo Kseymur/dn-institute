@@ -128,31 +128,39 @@ def get_same_texts(target, url, list_of_target_entities):
     return href_list
 
 
-def check_old_texts(href_list, url, new_text, prompt, config):
+def get_old_text(url):
+    """
+    Gets an old text from the crypto wiki
+    """
+    response = requests.get(url)
+    if response.status_code == 200:
+        html = response.text
+        soup = BeautifulSoup(html, 'html.parser')
+        old_text = soup.get_text()
+        old_text = re.search(r'Summary\n#.*', old_text, re.DOTALL)
+        old_text = old_text.group(0)
+        return old_text
+    else:
+        print("Failed to retrieve page content")
+
+
+def compare_texts(href_list, url, new_text, prompt, config):
     """
     Compares a new text from a pull request with old texts
     """
-    have_same_article = False
     for href in href_list:
         url = url + href
-        response = requests.get(url)
-        if response.status_code == 200:
-            html = response.text
-            soup = BeautifulSoup(html, 'html.parser')
-            old_text = soup.get_text()
-            old_text = re.search(r'Summary\n#.*', old_text, re.DOTALL)
-            old_text = old_text.group(0)
-            amount_of_tokens = count_tokens(prompt%(new_text, old_text))
-            if amount_of_tokens > config["max_tokens"]:
-                threshold = amount_of_tokens / 2
-                new_text = trimming_text(new_text, threshold)
-                old_text = trimming_text(old_text, threshold)
-            query = prompt % (new_text, old_text)
-            ans = openai_call(query, config)
-            obj = json.loads(ans)
-            if obj["have_same_article"]:
-               have_same_article = True
-               return ":x:"
+        old_text = get_old_text(url)
+        amount_of_tokens = count_tokens(prompt % (new_text, old_text))
+        if amount_of_tokens > config["max_tokens"]:
+            threshold = amount_of_tokens / 2
+            new_text = trimming_text(new_text, threshold)
+            old_text = trimming_text(old_text, threshold)
+        query = prompt % (new_text, old_text)
+        ans = openai_call(query, config)
+        obj = json.loads(ans)
+        if obj["have_same_article"]:
+            return ":x:"
     return ":white_check_mark:"
 
 
@@ -204,7 +212,7 @@ def main():
     new_text, target = new_text_handler(diff)
     list_of_target_entities = get_list_of_target_entities('https://dn.institute/attacks/posts/target-entities/')
     href_list = get_same_texts(target, 'https://dn.institute/attacks/posts/target-entities/', list_of_target_entities)
-    answer = check_old_texts(href_list, 'https://dn.institute', new_text, PROMPT, config)
+    answer = compare_texts(href_list, 'https://dn.institute', new_text, PROMPT, config)
     print(answer)
     create_comment_on_pr(pr, answer)
 
