@@ -64,8 +64,8 @@ def create_comment_on_pr(pull_request, answer):
         comment = generate_comment(answer)
         print(comment)
         # only post comment if running on Github Actions
-        if os.environ.get("GITHUB_ACTIONS") == "true":
-            pull_request.create_issue_comment(comment)
+        #if os.environ.get("GITHUB_ACTIONS") == "true":
+        pull_request.create_issue_comment(comment)
     except Exception as e:
         print(f"Error creating a comment on PR: {e}")
 
@@ -108,48 +108,21 @@ def generate_comment(answer):
     return comment
 
 
-PROMPT = """Conduct a comprehensive review of the provided text by performing both fact-checking and spell-checking. 
-For fact-checking, identify each factual claim and verify its accuracy against reliable web sources. For each claim, cross-reference specific details such as numbers, dates, monetary values, and named entities with information from credible websites.
-For spell-checking, identify and correct any spelling, grammatical, and punctuation mistakes.
-Pay attention to the fact that the text is a Markdown document with headers for Hugo SSG. Check if it conforms to the requirements of this format.
-Also, the text should comply with the submission guidelines. Extract a filename from the text and check if it matches the desirable format "YYYY-MM-DD-entity-that-was-hacked.md".
-Then extract all headers from the text and check if they are included in the set of allowed headers: ("## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes"). If there are any extra or missing headers, return False.
-Then extract all metadata headers located between "---" and "---" from the text and check if they are included in the set of allowed metadata headers: ("date", "target-entities", "entity-types", "attack-types", "title", "loss"). If there are any extra or missing metadata headers, return False.
+PROMPT = """Please review and verify the provided text. This involves two main tasks: fact-checking and spell-checking.
 
-Present your findings only in a structured JSON format.
-Output Format: 
-{
-  "fact-checking": [
-    {
-      "claim": "[Exact factual statement from the text]",
-      "source": "[Direct URL or the name of the credible source where the verification information was found]",
-      "result": "[True or False]",
-      "explanation": "[why it is False; if result is True the field should be empty]"
-    }
-  ],
-  "spell-checking": [
-  {"context": "[the sentence with a mistake]",
-   "mistake": "[the mistake]",     
-   "correction": "[the correction of the mistake]"    
-   }  
-   ],
-   "hugo-checking": "[True or False]",
-   "submission_guidelines": {
-        "article_filename": "[an extracted filename with .md]", 
-        "correct_filename": "[the corrected filename]",
-        "is_filename_correct": "[True or False]",
-        "allowed_headers": "[the list of allowed headers]",    
-        "headers_from_text": "[a list of headers from the text]",    
-        "has_allowed_headers": "[True or False]",
-        "allowed_metadata_headers": "[the list of allowed metadata headers]",
-        "metadata_headers_from_text": "[a list of metadata headers from the text]",
-        "has_allowed_metadata_headers": "[True or False]" 
-        }
-        
-  }
+Fact-Checking: Examine each factual statement in the text. Verify these against reliable online sources. Specifically, check the accuracy of numbers, dates, monetary values, and names of people or entities. Report your findings in a structured format, stating whether each claim is true or false, with a source for verification and an explanation if a claim is false.
+
+Spell-Checking: Look for spelling, grammar, and punctuation mistakes in the text. List each mistake along with its correction.
+
+Additionally, since the text is a Markdown document for Hugo SSG, ensure it adheres to specific formatting requirements:
+
+Check if the document follows the Markdown format, including appropriate headers.
+Confirm if it meets submission guidelines, particularly the file naming convention ("YYYY-MM-DD-entity-that-was-hacked.md"). Extract the name of the file from the text and compare it to the correct name.
+Verify that the document includes only the allowed headers: "## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes".
+Check for the presence of specific metadata headers between "---" lines, such as "date", "target-entities", "entity-types", "attack-types", "title", "loss". The document must contain all and only allowed metadata headers.
 Example:
 Input Text: "bla-bla.md: In July 2011, BTC-e, a cryptocurrency exchange, experienced a security breach that resulted in the loss of around 4,500 BTC."
-
+Present your findings only in a structured JSON format.
 Output: {"fact-checking": 
     [
     {"claim": "In July 2011, BTC-e experienced a security breach.",
