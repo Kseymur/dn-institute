@@ -222,7 +222,3 @@ def main():
         create_comment_on_pr(pr, answer)
     else:
         create_comment_on_pr(pr, ":white_check_mark:")
-
-
-if __name__ == "__main__":
-    main()
