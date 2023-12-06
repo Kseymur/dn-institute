@@ -195,26 +195,33 @@ Second: ```%s```
 
 If the texts say the same thing, return True.  Output should be machine-readable, for example:
 ```{
-  "have_same_article": true|false
+  "have_same_article": True|False
 }```"""
 
 
 def main():
     args = parse_cli_args()
     openai.api_key = args.API_key
+    
     with open('tools/config.json', 'r') as config_file:
         config = json.load(config_file)
+
+    main_url = 'https://dn.institute'
+    target_entities_url = 'https://dn.institute/attacks/posts/target-entities/'
 
     github = Github(args.github_token)
     pr = get_pull_request(github, args.pull_url)
     _diff = get_diff_by_url(pr)
     diff = parse_diff(_diff)
     new_text, target = new_text_handler(diff)
-    list_of_target_entities = get_list_of_target_entities('https://dn.institute/attacks/posts/target-entities/')
-    href_list = get_same_texts(target, 'https://dn.institute/attacks/posts/target-entities/', list_of_target_entities)
-    answer = compare_texts(href_list, 'https://dn.institute', new_text, PROMPT, config)
-    print(answer)
-    create_comment_on_pr(pr, answer)
+    list_of_target_entities = get_list_of_target_entities(target_entities_url)
+    href_list = get_same_texts(target, target_entities_url, list_of_target_entities)
+    if href_list:
+        answer = compare_texts(href_list, main_url, new_text, PROMPT, config)
+        print(answer)
+        create_comment_on_pr(pr, answer)
+    else:
+        create_comment_on_pr(pr, ":white_check_mark:")
 
 
 if __name__ == "__main__":
