@@ -112,7 +112,7 @@ PROMPT = """Please review and verify the provided text. This involves two main t
 
 Fact-Checking: Examine each factual statement in the text. Verify these against reliable online sources. Specifically, check the accuracy of numbers, dates, monetary values, and names of people or entities. Report your findings in a structured format, stating whether each claim is true or false, with a source for verification and an explanation if a claim is false.
 
-Spell-Checking: Look for spelling, grammar, and punctuation mistakes in the text. List each mistake along with its correction.
+Spell-Checking: Scan the text for any spelling, grammatical, and punctuation mistakes. List each mistake you find, providing the incorrect and corrected versions.
 
 Additionally, since the text is a Markdown document for Hugo SSG, ensure it adheres to specific formatting requirements:
 
