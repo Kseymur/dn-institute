@@ -75,7 +75,7 @@ def generate_comment(answer):
     Generate a formatted comment based on the provided answer.
     """
     comment = "## Fact-Checking Results\n\n"
-    for claim in answer["fact-checking"]:
+    for claim in answer["fact_checking"]:
         emoji = ":white_check_mark:" if claim["result"].lower() == "true" else ":x:"
         comment += f"- **Claim**: {claim['claim']} {emoji}\n"
         comment += f"  - **Source**: [{claim['source']}]({claim['source']})\n"
@@ -84,13 +84,13 @@ def generate_comment(answer):
         comment += "\n"
 
     comment += "## Spell-Checking Results\n\n"
-    for mistake in answer["spell-checking"]:
+    for mistake in answer["spell_checking"]:
         comment += f"- **Mistake**: `{mistake['mistake']}`\n"
         comment += f"  - **Correction**: `{mistake['correction']}`\n"
         comment += f"  - **Context**: `{mistake['context']}`\n"
         comment += "\n"
 
-    emoji_hugo = ":white_check_mark:" if answer['hugo-checking'].lower() == "true" else ":x:"
+    emoji_hugo = ":white_check_mark:" if answer['hugo_checking'].lower() == "true" else ":x:"
     comment += f"## Hugo SSG Formatting Check\n- Does it match Hugo SSG formatting? {emoji_hugo}\n\n"
 
     emoji_filename = ":white_check_mark:" if answer['submission_guidelines']['is_filename_correct'].lower() == "true" else ":x:"
@@ -123,20 +123,20 @@ Check for the presence of specific metadata headers between "---" lines, such as
 Example:
 Input Text: "bla-bla.md: In July 2011, BTC-e, a cryptocurrency exchange, experienced a security breach that resulted in the loss of around 4,500 BTC."
 Present your findings only in a structured JSON format.
-Output: {"fact-checking": 
+Output: {"fact_checking": 
     [
     {"claim": "In July 2011, BTC-e experienced a security breach.",
     "source": "https://bitcoinmagazine.com/business/btc-e-attacked-1343738085",
     "result": "False",
     "explanation": "BTC-e experienced a security breach in July 2012, not 2011"}
     ],
-    "spell-checking": [
+    "spell_checking": [
     {"context": "a cryptocurrency exchange",
     "mistake": "exchange",     
     "correction": "exchange"    
     }  
     ],
-    "hugo-checking": "False",
+    "hugo_checking": "False",
     "submission_guidelines": {
         "article_filename": "bla-bla.md", 
         "correct_filename": "2012-07-16-BTC-e.md",
