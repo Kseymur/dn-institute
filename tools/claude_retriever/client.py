@@ -21,7 +21,7 @@ RETRIEVAL_PROMPT = """
 You are given a list of factual statements. Your job is to verify the accuracy of each statement using the search engine tool. Here is the description of the search engine tool: <tool_description>{description}</tool_description>
 
 For each statement, create a query to verify its accuracy and insert it within <search_query> tags like so: <search_query>query</search_query>. 
-You will then receive results within <search_result></search_result> tags. Use these results to determine the accuracy of each statement, providing a result of 'True' or 'False'. 
+You will then receive results within <search_result></search_result> tags. Use these results to determine the accuracy of each statement, providing a result of 'True', 'False' or 'Unverified'. 
 Place the result between tags <result></result>. Also, put the Web Page URL between tags <source></source>. 
 If there is no URL, put 'None' in the <source></source> tags.
  If the result is False, provide an explanation why between tags <explanation></explanation>.

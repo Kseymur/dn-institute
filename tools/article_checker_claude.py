@@ -79,7 +79,7 @@ def generate_comment(answer):
         emoji = ":white_check_mark:" if str(claim["result"]).lower() == "true" else ":x:"
         comment += f"- **Claim**: {claim['statement']} {emoji}\n"
         comment += f"  - **Source**: [{claim['source']}]({claim['source']})\n"
-        if str(claim["result"]).lower() != "true":
+        if str(claim["result"]).lower() == "false":
             comment += f"  - **Explanation**: {claim['explanation']}\n"
         comment += "\n"
 
