@@ -9,9 +9,10 @@ import json
 logger = logging.getLogger(__name__)
 
 EXTRACTING_PROMPT = """
-Please extract statements that appear to be factual from the text provided between <text></text> tags.
+Please extract important statements that appear to be factual from the text provided between <text></text> tags.
 Return the extracted statements as a list. Skip the preamble; go straight into the result.
 Also, return the number of extracted statements between tags <number_of_statements></number_of_statements>.
+Aim to extract only important statements with numbers, dates, and names of organizations. There should not be too many extracted statements.
 
 <text>{text}</text>
 """
@@ -21,7 +22,9 @@ You are given a list of factual statements. Your job is to verify the accuracy o
 
 For each statement, create a query to verify its accuracy and insert it within <search_query> tags like so: <search_query>query</search_query>. 
 You will then receive results within <search_result></search_result> tags. Use these results to determine the accuracy of each statement, providing a result of 'True' or 'False'. 
-Place the result between tags <result></result>. Also, put the Web Page URL between tags <source></source>. If the result is False, provide an explanation why between tags <explanation></explanation>.
+Place the result between tags <result></result>. Also, put the Web Page URL between tags <source></source>. 
+If there is no URL, put 'None' in the <source></source> tags.
+ If the result is False, provide an explanation why between tags <explanation></explanation>.
 Specifically, check the accuracy of numbers, dates, monetary values, and names of people or entities. 
 
 If a query already in <search_query>query</search_query> tags, don't try to verify it. 
