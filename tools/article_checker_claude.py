@@ -85,7 +85,7 @@ def generate_comment(answer):
 
     comment += "## Spell-Checking Results\n\n"
     for mistake in answer["spell_checking"]:
-        comment += f"- **Mistake**: `{mistake['mistake']}`\n"
+        comment += f"- **Mistake**: `{mistake['error']}`\n"
         comment += f"  - **Correction**: `{mistake['correction']}`\n"
         comment += f"  - **Context**: `{mistake['context']}`\n"
         comment += "\n"
@@ -135,7 +135,7 @@ def main():
 
     answer = api_call(text, client, model)
     print('-' * 50)
-    print(answer)
+    print("model answer", answer)
     print('-' * 50)
 
     extracted_answer = extract_json(answer)

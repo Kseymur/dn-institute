@@ -10,75 +10,71 @@ logger = logging.getLogger(__name__)
 
 EXTRACTING_PROMPT = """
 Please extract important statements that appear to be factual from the text provided between <text></text> tags.
-Return the extracted statements as a list. Skip the preamble; go straight into the result.
+Return the extracted statements. Place each statement within <statement></statement> tags.
 Also, return the number of extracted statements between tags <number_of_statements></number_of_statements>.
-Aim to extract only important statements with numbers, dates, and names of organizations. There should not be too many extracted statements.
-
-<text>{text}</text>
+Aim to extract important statements with numbers, dates, and names of organizations. There should not be too many extracted statements.
+Skip the preamble; go straight into the result.
 """
 
 RETRIEVAL_PROMPT = """
-You are given a list of factual statements. Your job is to verify the accuracy of each statement using the search engine tool. Here is the description of the search engine tool: <tool_description>{description}</tool_description>
+You are tasked with verifying the accuracy of a series of factual statements using a search engine. Below is the search engine's description: <tool_description>{description}</tool_description>.
 
-For each statement, create a query to verify its accuracy and insert it within <search_query> tags like so: <search_query>query</search_query>. 
-You will then receive results within <search_result></search_result> tags. Use these results to determine the accuracy of each statement, providing a result of 'True', 'False' or 'Unverified'. 
-Place the result between tags <result></result>. Also, put the Web Page URL between tags <source></source>. 
-If there is no URL, put 'None' in the <source></source> tags.
- If the result is False, provide an explanation why between tags <explanation></explanation>.
-Specifically, check the accuracy of numbers, dates, monetary values, and names of people or entities. 
+For each statement, formulate a query to check its accuracy and enclose it in <search_query> tags: <search_query>query</search_query>.
+Results will be provided in <search_result></search_result> tags. Based on these results, determine the accuracy of each statement and categorize it as 'True', 'False', or 'Unverified'.
+Record your findings within <result></result> tags, and include the Web Page URL in <source></source> tags (use 'None' if no URL is available).
+If a statement is false, include an explanation in <explanation></explanation> tags.
+Focus particularly on verifying numbers, dates, monetary values, and names of people or organizations.
+Avoid verifying statements already enclosed in <search_query>query</search_query> tags.
+Also, place each statement within <statement></statement> tags.
 
-If a query already in <search_query>query</search_query> tags, don't try to verify it. 
-Also, place each statement itself between tags: <statement></statement>.
-
-Here are the statements: {statements}
+Statements to be verified: 
 """
 
 ANSWER_PROMPT = """
-Please review and verify the provided text.
+<fact_checking_results>%s</fact_checking_results>
 
-Fact-Checking: Using the information provided within the <fact_checking_results></fact_checking_results> tags, please form the output  with results of fact-checking. There should be required fields "statement", "source", "result". If the result is False, provide an explanation why. If there is no source, put "None" in the "source" field.
+<text>%s</text>
 
-Spell-Checking: Scan the text between <text></text> for any spelling, grammatical, and punctuation mistakes. List each mistake you find, providing the incorrect and corrected versions.
+Please review the provided text. Follow these steps:
 
-Additionally, since the text between <text></text> is a Markdown document for Hugo SSG, ensure it adheres to specific formatting requirements:
+1. Using the information provided within the <fact_checking_results></fact_checking_results> tags, please form the desired output with results of fact-checking. There should be required fields "statement", "source", "result". If the result is False, provide an explanation why. If there is no source, put "None" in the "source" field.
+
+2. Perform spell-checking of the text between <text></text> tags. Try to find as many potential spelling mistakes as possible. For each identified mistake, provide the context, the incorrect word, and the suggested correction.
+
+3. Additionally, since the text between <text></text> is a Markdown document for Hugo SSG, ensure it adheres to specific formatting requirements.
 
 Check if the text between <text></text> follows the Markdown format, including appropriate headers.
-Confirm if it meets submission guidelines, particularly the file naming convention ("YYYY-MM-DD-entity-that-was-hacked.md"). Extract the name of the file from the text and compare it to the correct name.
-Verify that the document includes only the allowed headers: "## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes".
-Check for the presence of specific metadata headers between "---" lines, such as "date", "target-entities", "entity-types", "attack-types", "title", "loss". The document must contain all and only allowed metadata headers.
+Confirm if it meets submission guidelines, particularly the file naming convention ("YYYY-MM-DD-entity-that-was-hacked.md"). Extract the name of the file from the text between <text></text> tags and compare it to the correct name.
+Verify that the text between <text></text> includes only the allowed headers: "## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes".
+Check for the presence of specific metadata headers between "---" lines, such as "date", "target-entities", "entity-types", "attack-types", "title", "loss". The text between <text></text> must contain all and only allowed metadata headers.
 Present your findings only in a valid, machine-readable JSON format. Skip the preamble; go straight into the JSON result.
-Example:
-Input Text: "bla-bla.md: In July 2011, BTC-e, a cryptocurrency exchange, experienced a security breach that resulted in the loss of around 4,500 BTC."
-Output example: {"fact_checking": 
-    [
-    {"statement": "In July 2011, BTC-e experienced a security breach.",
-    "source": "https://bitcoinmagazine.com/business/btc-e-attacked-1343738085",
-    "result": "False",
-    "explanation": "BTC-e experienced a security breach in July 2012, not 2011"
-    }
-    ],
-    "spell_checking": [
-    {"context": "a cryptocurrency exchange",
-    "mistake": "exchange",     
-    "correction": "exchange"    
-    }  
-    ],
-    "hugo_checking": "False",
-    "submission_guidelines": {
-        "article_filename": "bla-bla.md", 
-        "correct_filename": "2012-07-16-BTC-e.md",
-        "is_filename_correct": "False",
-        "allowed_headers": ["## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes"],    
-        "headers_from_text": "None",    
-        "has_allowed_headers": "False",
-        "allowed_metadata_headers": ["date", "target-entities", "entity-types", "attack-types", "title", "loss"],
-        "metadata_headers_from_text": "None",
-        "has_allowed_metadata_headers": "False" 
-        }
-}
-<fact_checking_results>%s</fact_checking_results> 
-<text>%s</text>
+Here is an example of a valid JSON result:
+{"fact_checking":
+   [
+   {"statement": "In July 2011, BTC-e experienced a security breach.",
+   "source": "https://bitcoinmagazine.com/business/btc-e-attacked-1343738085",
+   "result": "False",
+   "explanation": "BTC-e experienced a security breach in July 2012, not 2011"
+   }
+   ],
+   "spell_checking": [
+   {"context": "a cryptocurrency excange", "error": "excange", "correction": "exchange"},
+   {"context": "The attakers stole", "error": "attakers", "correction": "attackers"}
+   ],
+   "hugo_checking": "False",
+   "submission_guidelines": {
+       "article_filename": "bla-bla.md",
+       "correct_filename": "2012-07-16-BTC-e.md",
+       "is_filename_correct": "False",
+       "allowed_headers": ["## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes"],   
+       "headers_from_text": "None",   
+       "has_allowed_headers": "False",
+       "allowed_metadata_headers": ["date", "target-entities", "entity-types", "attack-types", "title", "loss"],
+       "metadata_headers_from_text": "None",
+       "has_allowed_metadata_headers": "False"
+       }
 """
+
 
 class ClientWithRetrieval(Anthropic):
 
@@ -96,7 +92,7 @@ class ClientWithRetrieval(Anthropic):
         self.verbose = verbose
     
     def extract_statements(self, text: str, model: str, temperature: float = 0.0, max_tokens_to_sample: int = 1000):
-        prompt = f"{HUMAN_PROMPT} {EXTRACTING_PROMPT}<text>{text}</text>{AI_PROMPT}"
+        prompt = f"{EXTRACTING_PROMPT} {HUMAN_PROMPT} <text>{text}</text>{AI_PROMPT}"
         completion = self.completions.create(prompt=prompt, model=model, temperature=temperature, max_tokens_to_sample=max_tokens_to_sample).completion
             
         return completion
@@ -125,7 +121,7 @@ class ClientWithRetrieval(Anthropic):
         print("Statements:", statements)
         num_of_statements = int(self.extract_between_tags("number_of_statements", statements, strip=True))
         print("num_of_statements:", num_of_statements)
-        prompt = f"{HUMAN_PROMPT} {RETRIEVAL_PROMPT.format(statements=statements, description=description)}{AI_PROMPT}"
+        prompt = f"{RETRIEVAL_PROMPT.format(description=description)}{HUMAN_PROMPT} {statements} {AI_PROMPT}"
         print("Prompt:", prompt)
         token_budget = max_tokens_to_sample
         all_raw_search_results: list[SearchResult] = []
@@ -152,7 +148,7 @@ class ClientWithRetrieval(Anthropic):
                 break
         print("all_completions:", completions)
         return completions
-    
+
 
     def answer_with_results(self, search_results: str, query: str, model: str, temperature: float):
         """Generates an RAG response based on search results and a query. If format_results is True,
@@ -163,7 +159,7 @@ class ClientWithRetrieval(Anthropic):
         """
         
         try:
-            prompt = f"{HUMAN_PROMPT} {ANSWER_PROMPT % (search_results, query)}{AI_PROMPT}"
+            prompt = f"{HUMAN_PROMPT} {ANSWER_PROMPT%(search_results, query)} {AI_PROMPT}"
         except Exception as e:
             print(str(e))
         
