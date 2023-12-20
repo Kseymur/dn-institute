@@ -47,8 +47,8 @@ Check if the text between <text></text> follows the Markdown format, including a
 Confirm if it meets submission guidelines, particularly the file naming convention ("YYYY-MM-DD-entity-that-was-hacked.md"). Extract the name of the file from the text between <text></text> tags and compare it to the correct name.
 Verify that the text between <text></text> includes only the allowed headers: "## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes".
 Check for the presence of specific metadata headers between "---" lines, such as "date", "target-entities", "entity-types", "attack-types", "title", "loss". The text between <text></text> must contain all and only allowed metadata headers.
-Present your findings only in a valid, machine-readable JSON format. Skip the preamble; go straight into the JSON result.
-Here is an example of a valid JSON result:
+Present your findings only in a structured JSON format. Skip the preamble; go straight into the JSON result.
+Output example:
 {"fact_checking":
    [
    {"statement": "In July 2011, BTC-e experienced a security breach.",
@@ -73,6 +73,7 @@ Here is an example of a valid JSON result:
        "metadata_headers_from_text": "None",
        "has_allowed_metadata_headers": "False"
        }
+    }
 """
 
 
