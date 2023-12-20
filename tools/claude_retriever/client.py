@@ -25,7 +25,6 @@ Record your findings within <result></result> tags, and include the Web Page URL
 If a statement is false, include an explanation in <explanation></explanation> tags.
 Focus particularly on verifying numbers, dates, monetary values, and names of people or organizations.
 Avoid verifying statements already enclosed in <search_query>query</search_query> tags.
-Also, place each statement within <statement></statement> tags.
 
 Statements to be verified: 
 """
@@ -142,6 +141,7 @@ class ClientWithRetrieval(Anthropic):
             if stop_reason == 'stop_sequence' and stop_seq == '</search_query>':
                 logger.info(f'Attempting search number {tries}.')
                 raw_search_results, formatted_search_results = self._search_query_stop(partial_completion, n_search_results_to_use)
+                print("formatted_search_results", formatted_search_results)
                 prompt += '</search_query>' + formatted_search_results
                 completions += '</search_query>' + formatted_search_results
                 all_raw_search_results += raw_search_results
