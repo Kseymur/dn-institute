@@ -143,3 +143,6 @@ def main():
     print(extracted_answer)
     print('-' * 50)
     create_comment_on_pr(pr, extracted_answer)
+
+if __name__ == "__main__":
+    main()

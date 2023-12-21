@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 EXTRACTING_PROMPT = """
 Please extract important statements that appear to be factual from the text provided between <text></text> tags.
 Return the extracted statements. Place each statement within <statement></statement> tags.
-Also, return the number of extracted statements between tags <number_of_statements></number_of_statements>.
+Also, return the number of extracted statements within <number_of_statements></number_of_statements> tags.
 Aim to extract important statements with numbers, dates, and names of organizations. There should not be too many extracted statements.
 Skip the preamble; go straight into the result.
 """
@@ -19,12 +19,13 @@ Skip the preamble; go straight into the result.
 RETRIEVAL_PROMPT = """
 You are tasked with verifying the accuracy of a series of factual statements using a search engine. Below is the search engine's description: <tool_description>{description}</tool_description>.
 
-For each statement, formulate a query to check its accuracy and enclose it in <search_query> tags: <search_query>query</search_query>.
+For each statement within <statement></statement> tags formulate a query to check its accuracy. You can make a call to the search engine tool by inserting a query within <search_query> tags like so: <search_query>query</search_query>. You'll then get results back within <search_result></search_result> tags.
 Results will be provided in <search_result></search_result> tags. Based on these results, determine the accuracy of each statement and categorize it as 'True', 'False', or 'Unverified'.
-Record your findings within <result></result> tags, and include the Web Page URL in <source></source> tags (use 'None' if no URL is available).
+Include the Web Page URL in <source></source> tags (use 'None' if no URL is available).
 If a statement is false, include an explanation in <explanation></explanation> tags.
 Focus particularly on verifying numbers, dates, monetary values, and names of people or organizations.
 Avoid verifying statements already enclosed in <search_query>query</search_query> tags.
+Do not try to answer the query. Your only job is to gather relevant search results that will help to check the accuracy of statements.
 
 Statements to be verified: 
 """
@@ -34,19 +35,10 @@ ANSWER_PROMPT = """
 
 <text>%s</text>
 
-Please review the provided text. Follow these steps:
+Please review the provided text. Perform the task step-by-step:
 
-1. Using the information provided within the <fact_checking_results></fact_checking_results> tags, please form the desired output with results of fact-checking. There should be required fields "statement", "source", "result". If the result is False, provide an explanation why. If there is no source, put "None" in the "source" field.
-
-2. Perform spell-checking of the text between <text></text> tags. Try to find as many potential spelling mistakes as possible. For each identified mistake, provide the context, the incorrect word, and the suggested correction.
-
-3. Additionally, since the text between <text></text> is a Markdown document for Hugo SSG, ensure it adheres to specific formatting requirements.
-
-Check if the text between <text></text> follows the Markdown format, including appropriate headers.
-Confirm if it meets submission guidelines, particularly the file naming convention ("YYYY-MM-DD-entity-that-was-hacked.md"). Extract the name of the file from the text between <text></text> tags and compare it to the correct name.
-Verify that the text between <text></text> includes only the allowed headers: "## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes".
-Check for the presence of specific metadata headers between "---" lines, such as "date", "target-entities", "entity-types", "attack-types", "title", "loss". The text between <text></text> must contain all and only allowed metadata headers.
-Present your findings only in a structured JSON format. Skip the preamble; go straight into the JSON result.
+1. Using the information provided within the <fact_checking_results></fact_checking_results> tags, 
+please form the desired output with results of fact-checking. There should be required fields "statement", "source", "result". If the result is False, provide an explanation why. If there is no source, put "None" in the "source" field.
 Output example:
 {"fact_checking":
    [
@@ -55,11 +47,23 @@ Output example:
    "result": "False",
    "explanation": "BTC-e experienced a security breach in July 2012, not 2011"
    }
-   ],
-   "spell_checking": [
+   ]}
+2. Perform spell-checking of the text between <text></text> tags. Try to find as many potential spelling mistakes as possible. For each identified mistake, provide the context, the incorrect word, and the suggested correction.
+Don't try to adjust to the result. Feel free to leave the field blank.
+Output example:
+{"spell_checking": [
    {"context": "a cryptocurrency excange", "error": "excange", "correction": "exchange"},
    {"context": "The attakers stole", "error": "attakers", "correction": "attackers"}
-   ],
+   ]}
+3. Additionally, since the text between <text></text> is a Markdown document for Hugo SSG, ensure it adheres to specific formatting requirements.
+
+Check if the text between <text></text> follows the Markdown format, including appropriate headers.
+Confirm if it meets submission guidelines, particularly the file naming convention ("YYYY-MM-DD-entity-that-was-hacked.md"). Extract the name of the file from the text between <text></text> tags and compare it to the correct name.
+Verify that the text between <text></text> includes only the allowed headers: "## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes".
+Check for the presence of specific metadata headers between "---" lines, such as "date", "target-entities", "entity-types", "attack-types", "title", "loss". The text between <text></text> must contain all and only allowed metadata headers.
+Present your findings only in a structured JSON format. Skip the preamble; go straight into the JSON result.
+Output example:
+{
    "hugo_checking": "False",
    "submission_guidelines": {
        "article_filename": "bla-bla.md",
@@ -73,6 +77,8 @@ Output example:
        "has_allowed_metadata_headers": "False"
        }
     }
+
+Combine the results of all steps into a single JSON and return it to me in <answer></answer> tags.
 """
 
 
@@ -203,7 +209,9 @@ class ClientWithRetrieval(Anthropic):
                                                  temperature=temperature)
         print("Search results:", search_results)
         answer = self.answer_with_results(search_results, query, model, temperature)
-        return answer
+        print("Answer:", answer)
+        json_answer = self.extract_between_tags("answer", answer)
+        return json_answer
     
 
     # Helper methods
