@@ -31,12 +31,12 @@ Statements to be verified:
 """
 
 ANSWER_PROMPT = """
+Please review the provided tex between <text></text> tags:
 <fact_checking_results>%s</fact_checking_results>
 
 <text>%s</text>
 
-Please review the provided text. Perform the task step-by-step:
-
+Perform the following tasks:
 1. Using the information provided within the <fact_checking_results></fact_checking_results> tags, 
 please form the desired output with results of fact-checking. There should be required fields "statement", "source", "result". If the result is False, provide an explanation why. If there is no source, put "None" in the "source" field.
 Output example:
@@ -48,28 +48,30 @@ Output example:
    "explanation": "BTC-e experienced a security breach in July 2012, not 2011"
    }
    ]}
-2. Perform spell-checking of the text between <text></text> tags. Try to find as many potential spelling mistakes as possible. 
-Carefully read each sentence and pay attention to every word. Look for common errors such as misplaced letters, missing letters, or incorrect letter combinations. 
-Also, be aware of words that might be commonly confused, such as homophones (e.g., 'their' vs 'there'). For each identified spelling mistake, provide the context (the sentence or phrase in which it occurs), the incorrectly spelled word, and the correct spelling of the word
-Don't try to adjust to the example. Feel free to leave the field blank. 
-Before you reply write spelling mistakes down. Please pay special attention to this task.
+2. Find all possible spelling mistakes in the text between tags <text></text>. 
+For each misspelled word:
 
-Output example:
+- Provide the sentence containing the error
+- Highlight the incorrect word
+- Suggest the correct spelling
+
+Only make corrections for actual spelling errors. Be helpful and point out every spelling error you can find.
+
+Output example: 
 {"spell_checking": [
-   {"context": "a cryptocurrency excange", "error": "excange", "correction": "exchange"},
-   {"context": "The attakers stole", "error": "attakers", "correction": "attackers"}
+   {"context": "The attakers stole my cryptocurrency.", "error": "attakers", "correction": "attackers"}
    ]}
 3. Additionally, since the text between <text></text> is a Markdown document for Hugo SSG, ensure it adheres to specific formatting requirements.
+Output example:
+{"hugo_checking": "False"}
 
-Check if the text between <text></text> follows the Markdown format, including appropriate headers.
+4. Check if the text between <text></text> follows the Markdown format, including appropriate headers.
 Confirm if it meets submission guidelines, particularly the file naming convention ("YYYY-MM-DD-entity-that-was-hacked.md"). Extract the name of the file from the text between <text></text> tags and compare it to the correct name.
 Verify that the text between <text></text> includes only the allowed headers: "## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes".
 Check for the presence of specific metadata headers between "---" lines, such as "date", "target-entities", "entity-types", "attack-types", "title", "loss". The text between <text></text> must contain all and only allowed metadata headers.
 Present your findings only in a structured JSON format. 
 Output example:
-{
-   "hugo_checking": "False",
-   "submission_guidelines": {
+{"submission_guidelines": {
        "article_filename": "bla-bla.md",
        "correct_filename": "2012-07-16-BTC-e.md",
        "is_filename_correct": "False",
@@ -83,7 +85,7 @@ Output example:
     }
 
 Combine the results of all steps into a single JSON and return it to me in <answer></answer> tags. 
-All quotes in string values must be properly escaped for use with the json.load function in Python
+All quotes in string values must be properly escaped for use with the json.load function in Python. Strictly adhere to the key names.
 """
 
 
@@ -182,7 +184,7 @@ class ClientWithRetrieval(Anthropic):
                 prompt=prompt, 
                 model=model, 
                 temperature=temperature, 
-                max_tokens_to_sample=3000
+                max_tokens_to_sample=4000
             ).completion
         except Exception as e:
             answer = str(e)
