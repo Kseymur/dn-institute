@@ -48,7 +48,7 @@ def api_call(query, client, model):
             model=model,
             n_search_results_to_use=1,
             max_searches_to_try=5,
-            max_tokens_to_sample=3000
+            max_tokens_to_sample=4000
         )
     except Exception as e:
         print(f"Error in API call: {e}")
@@ -138,11 +138,8 @@ def main():
     print("model answer", answer)
     print('-' * 50)
 
-    extracted_answer = extract_json(answer)
+    extracted_answer = json.loads(answer)
     print('-' * 50)
     print(extracted_answer)
     print('-' * 50)
     create_comment_on_pr(pr, extracted_answer)
-
-if __name__ == "__main__":
-    main()

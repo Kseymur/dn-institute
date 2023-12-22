@@ -4,7 +4,7 @@ import tiktoken
 
 
 def extract_json(text):
-    json_pattern = r'```\s*(\{.*?\})\s*```'
+    json_pattern = r'\s*(\{.*?\})\s*'
     match = re.search(json_pattern, text, re.DOTALL)
 
     if match:

@@ -48,8 +48,12 @@ Output example:
    "explanation": "BTC-e experienced a security breach in July 2012, not 2011"
    }
    ]}
-2. Perform spell-checking of the text between <text></text> tags. Try to find as many potential spelling mistakes as possible. For each identified mistake, provide the context, the incorrect word, and the suggested correction.
-Don't try to adjust to the result. Feel free to leave the field blank.
+2. Perform spell-checking of the text between <text></text> tags. Try to find as many potential spelling mistakes as possible. 
+Carefully read each sentence and pay attention to every word. Look for common errors such as misplaced letters, missing letters, or incorrect letter combinations. 
+Also, be aware of words that might be commonly confused, such as homophones (e.g., 'their' vs 'there'). For each identified spelling mistake, provide the context (the sentence or phrase in which it occurs), the incorrectly spelled word, and the correct spelling of the word
+Don't try to adjust to the example. Feel free to leave the field blank. 
+Before you reply write spelling mistakes down. Please pay special attention to this task.
+
 Output example:
 {"spell_checking": [
    {"context": "a cryptocurrency excange", "error": "excange", "correction": "exchange"},
@@ -61,7 +65,7 @@ Check if the text between <text></text> follows the Markdown format, including a
 Confirm if it meets submission guidelines, particularly the file naming convention ("YYYY-MM-DD-entity-that-was-hacked.md"). Extract the name of the file from the text between <text></text> tags and compare it to the correct name.
 Verify that the text between <text></text> includes only the allowed headers: "## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes".
 Check for the presence of specific metadata headers between "---" lines, such as "date", "target-entities", "entity-types", "attack-types", "title", "loss". The text between <text></text> must contain all and only allowed metadata headers.
-Present your findings only in a structured JSON format. Skip the preamble; go straight into the JSON result.
+Present your findings only in a structured JSON format. 
 Output example:
 {
    "hugo_checking": "False",
@@ -78,7 +82,8 @@ Output example:
        }
     }
 
-Combine the results of all steps into a single JSON and return it to me in <answer></answer> tags.
+Combine the results of all steps into a single JSON and return it to me in <answer></answer> tags. 
+All quotes in string values must be properly escaped for use with the json.load function in Python
 """
 
 
