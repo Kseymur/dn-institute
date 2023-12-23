@@ -56,7 +56,7 @@ For each misspelled word:
 - Suggest the correct spelling
 
 Only make corrections for actual spelling errors. Be helpful and point out every spelling error you can find.
-
+Try to look for mistakes only in the text between <text></text> tags. Do not try to correct the preamble.
 Output example: 
 {"spell_checking": [
    {"context": "The attakers stole my cryptocurrency.", "error": "attakers", "correction": "attackers"}
