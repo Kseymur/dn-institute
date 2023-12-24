@@ -52,7 +52,7 @@ Output example:
 For each misspelled word:
 
 - Provide the sentence containing the error
-- Highlight the incorrect word
+- Provide the incorrect word
 - Suggest the correct spelling
 
 Only make corrections for actual spelling errors. Be helpful and point out every spelling error you can find.
