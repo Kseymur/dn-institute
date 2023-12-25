@@ -57,6 +57,7 @@ For each misspelled word:
 
 Only make corrections for actual spelling errors. Be helpful and point out every spelling error you can find.
 Try to look for mistakes only in the text between <text></text> tags. Do not try to correct the preamble.
+
 Output example: 
 {"spell_checking": [
    {"context": "The attakers stole my cryptocurrency.", "error": "attakers", "correction": "attackers"}
@@ -69,7 +70,7 @@ Output example:
 Confirm if it meets submission guidelines, particularly the file naming convention ("YYYY-MM-DD-entity-that-was-hacked.md"). Extract the name of the file from the text between <text></text> tags and compare it to the correct name.
 Verify that the text between <text></text> includes only the allowed headers: "## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes".
 Check for the presence of specific metadata headers between "---" lines, such as "date", "target-entities", "entity-types", "attack-types", "title", "loss". The text between <text></text> must contain all and only allowed metadata headers.
-Present your findings only in a structured JSON format. 
+Present your findings in a structured JSON format. 
 Output example:
 {"submission_guidelines": {
        "article_filename": "bla-bla.md",
@@ -84,8 +85,9 @@ Output example:
        }
     }
 
-Combine the results of all steps into a single JSON and return it to me in <answer></answer> tags. 
+Combine the results of all steps into a single JSON and return it to me in <json></json> tags. 
 All quotes in string values must be properly escaped for use with the json.load function in Python. Strictly adhere to the key names.
+Also, besides the JSON, return the corrected text without spelling, grammar and stylic mistakes between <corrected_text></corrected_text> tags.
 """
 
 
@@ -217,8 +219,9 @@ class ClientWithRetrieval(Anthropic):
         print("Search results:", search_results)
         answer = self.answer_with_results(search_results, query, model, temperature)
         print("Answer:", answer)
-        json_answer = self.extract_between_tags("answer", answer)
-        return json_answer
+        json_answer = self.extract_between_tags("json", answer)
+        corrected_text = self.extract_between_tags("corrected_text", answer)
+        return json_answer, corrected_text
     
 
     # Helper methods

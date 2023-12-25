@@ -110,6 +110,16 @@ def generate_comment(answer):
     return comment
 
 
+    def generate_comment_with_corrected_text(corrected_text):
+    """
+    Generate a formatted comment based on the provided answer.
+    """
+    comment = "## The corrected text\n\n"
+    comment += f"{corrected_text}\n\n"
+
+    return comment
+
+
 def main():
     args = parse_cli_args()
     with open('tools/config.json', 'r') as config_file:
@@ -135,7 +145,7 @@ def main():
     print(text)
     print('-' * 50)
 
-    answer = api_call(text, client, model)
+    answer, corrected_text = api_call(text, client, model)
     print('-' * 50)
     print("model answer", answer)
     print('-' * 50)
@@ -144,4 +154,16 @@ def main():
     print('-' * 50)
     print(extracted_answer)
     print('-' * 50)
+
+    print('-' * 50)
+    print("This is a corrected text", corrected_text)
+    print('-' * 50)
+
+    corrected_comment_text = generate_comment_with_corrected_text(corrected_text)
+
     create_comment_on_pr(pr, extracted_answer)
+    try:
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            pull_request.create_issue_comment(corrected_comment_text)
+    except Exception as e:
+        print(f"Error creating a comment on PR: {e}")
