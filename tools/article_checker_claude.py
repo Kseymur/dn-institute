@@ -114,10 +114,10 @@ def generate_comment(answer):
     """
     Generate a formatted comment based on the provided answer.
     """
-    comment = "## The corrected text\n\n"
-    comment += f"{corrected_text}\n\n"
+        comment = "## The corrected text\n\n"
+        comment += f"{corrected_text}\n\n"
 
-    return comment
+        return comment
 
 
 def main():
