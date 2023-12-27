@@ -85,7 +85,7 @@ def generate_comment(answer):
         comment += "\n"
 
     comment += "## Some Editor's Note\n\n"
-    comment += answer["corrections"]
+    comment += f'{answer["corrections"]} \n\n'
 
     emoji_hugo = ":white_check_mark:" if str(answer['hugo_checking']).lower() == "true" else ":x:"
     comment += f"## Hugo SSG Formatting Check\n- Does it match Hugo SSG formatting? {emoji_hugo}\n\n"
