@@ -24,7 +24,7 @@ Include the Web Page URL in <source></source> tags (use 'None' if no URL is avai
 If a statement is false, include an explanation in <explanation></explanation> tags.
 Focus particularly on verifying numbers, dates, monetary values, and names of people or organizations.
 Avoid verifying statements already enclosed in <search_query>query</search_query> tags.
-Do not try to answer the query. Your only job is to gather relevant search results that will help to check the accuracy of statements.
+Do not attempt to assess the credibility of the statement using information beyond what is contained in the search_result. 
 
 Statements to be verified: 
 """
