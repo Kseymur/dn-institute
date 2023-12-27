@@ -48,7 +48,8 @@ Output example:
    }
    ]}
 2. Make detailed editor's notes on the text in <text></text> tags. 
-Suggest stylistic and grammatical improvements for the text, and point out any spelling error. Put your detailed notes and the list of spelling errors in the field "corrections". 
+Suggest stylistic and grammatical improvements for the text, and point out any error. 
+Put your detailed notes and the list of errors in the field "corrections". 
 The value of this field should be a string.
 
 3. Additionally, since the text between <text></text> is a Markdown document for Hugo SSG, ensure it adheres to specific formatting requirements.
