@@ -48,8 +48,7 @@ def api_call(query, client, model):
             model=model,
             n_search_results_to_use=1,
             max_searches_to_try=5,
-            max_tokens_to_sample=4000,
-            temperature=1.0,
+            max_tokens_to_sample=4000
         )
     except Exception as e:
         print(f"Error in API call: {e}")
@@ -85,12 +84,8 @@ def generate_comment(answer):
                 comment += f"  - **Explanation**: {claim['explanation']}\n"
         comment += "\n"
 
-    comment += "## Spell-Checking Results\n\n"
-    for mistake in answer["spell_checking"]:
-        comment += f"- **Mistake**: `{mistake['error']}`\n"
-        comment += f"  - **Correction**: `{mistake['correction']}`\n"
-        comment += f"  - **Context**: `{mistake['context']}`\n"
-        comment += "\n"
+    comment += "## Some Editor's Note\n\n"
+    comment += answer["corrections"]
 
     emoji_hugo = ":white_check_mark:" if str(answer['hugo_checking']).lower() == "true" else ":x:"
     comment += f"## Hugo SSG Formatting Check\n- Does it match Hugo SSG formatting? {emoji_hugo}\n\n"
@@ -108,16 +103,6 @@ def generate_comment(answer):
     comment += f"- Your Metadata Headers: `{', '.join(answer['submission_guidelines']['metadata_headers_from_text'])}` {emoji_headers}\n"
 
     return comment
-
-
-    def generate_comment_with_corrected_text(corrected_text):
-    """
-    Generate a formatted comment based on the provided answer.
-    """
-        comment = "## The corrected text\n\n"
-        comment += f"{corrected_text}\n\n"
-
-        return comment
 
 
 def main():
@@ -145,7 +130,7 @@ def main():
     print(text)
     print('-' * 50)
 
-    answer, corrected_text = api_call(text, client, model)
+    answer = api_call(text, client, model)
     print('-' * 50)
     print("model answer", answer)
     print('-' * 50)
@@ -155,15 +140,5 @@ def main():
     print(extracted_answer)
     print('-' * 50)
 
-    print('-' * 50)
-    print("This is a corrected text", corrected_text)
-    print('-' * 50)
-
-    corrected_comment_text = generate_comment_with_corrected_text(corrected_text)
 
     create_comment_on_pr(pr, extracted_answer)
-    try:
-        if os.environ.get("GITHUB_ACTIONS") == "true":
-            pull_request.create_issue_comment(corrected_comment_text)
-    except Exception as e:
-        print(f"Error creating a comment on PR: {e}")

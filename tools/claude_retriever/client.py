@@ -13,7 +13,6 @@ Please extract important statements that appear to be factual from the text prov
 Return the extracted statements. Place each statement within <statement></statement> tags.
 Also, return the number of extracted statements within <number_of_statements></number_of_statements> tags.
 Aim to extract important statements with numbers, dates, and names of organizations. There should not be too many extracted statements.
-Skip the preamble; go straight into the result.
 """
 
 RETRIEVAL_PROMPT = """
@@ -31,7 +30,7 @@ Statements to be verified:
 """
 
 ANSWER_PROMPT = """
-Please review the provided tex between <text></text> tags:
+You are an editor. Please review the provided tex between <text></text> tags:
 <fact_checking_results>%s</fact_checking_results>
 
 <text>%s</text>
@@ -48,20 +47,10 @@ Output example:
    "explanation": "BTC-e experienced a security breach in July 2012, not 2011"
    }
    ]}
-2. Find all possible spelling mistakes in the text between tags <text></text>. 
-For each misspelled word:
+2. Make editor's notes on the text in <text></text> tags. 
+Suggest stylistic and grammatical improvements for the text, and point out any spelling error. Put your notes and the list of spelling errors in the field "corrections". 
+The value of this field should be a string.
 
-- Provide the sentence containing the error
-- Provide the incorrect word
-- Suggest the correct spelling
-
-Only make corrections for actual spelling errors. Be helpful and point out every spelling error you can find.
-Try to look for mistakes only in the text between <text></text> tags. Do not try to correct the preamble.
-
-Output example: 
-{"spell_checking": [
-   {"context": "The attakers stole my cryptocurrency.", "error": "attakers", "correction": "attackers"}
-   ]}
 3. Additionally, since the text between <text></text> is a Markdown document for Hugo SSG, ensure it adheres to specific formatting requirements.
 Output example:
 {"hugo_checking": "False"}
@@ -87,7 +76,6 @@ Output example:
 
 Combine the results of all steps into a single JSON and return it to me in <json></json> tags. 
 All quotes in string values must be properly escaped for use with the json.load function in Python. Strictly adhere to the key names.
-Also, besides the JSON, return the corrected text without spelling, grammar and stylic mistakes between <corrected_text></corrected_text> tags.
 """
 
 
@@ -220,8 +208,7 @@ class ClientWithRetrieval(Anthropic):
         answer = self.answer_with_results(search_results, query, model, temperature)
         print("Answer:", answer)
         json_answer = self.extract_between_tags("json", answer)
-        corrected_text = self.extract_between_tags("corrected_text", answer)
-        return json_answer, corrected_text
+        return json_answer
     
 
     # Helper methods
