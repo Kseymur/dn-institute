@@ -61,11 +61,11 @@ def create_comment_on_pr(pull_request, answer):
     Create and post a comment on a Github pull request.
     """
     try:
-        comment = generate_comment(answer)
+        comment = answer #generate_comment(answer)
         print(comment)
         # only post comment if running on Github Actions
-        if os.environ.get("GITHUB_ACTIONS") == "true":
-            pull_request.create_issue_comment(comment)
+        #if os.environ.get("GITHUB_ACTIONS") == "true":
+        pull_request.create_issue_comment(comment)
     except Exception as e:
         print(f"Error creating a comment on PR: {e}")
 
@@ -154,11 +154,15 @@ def main():
 
     answer = api_call(text, client, model)
     print('-' * 50)
-    print(answer)
+    print('This is an answer', answer)
     print('-' * 50)
 
-    extracted_answer = json.loads(answer)
-    print('-' * 50)
-    print(extracted_answer)
-    print('-' * 50)
-    create_comment_on_pr(pr, extracted_answer)
+    # extracted_answer = json.loads(answer)
+    # print('-' * 50)
+    # print(extracted_answer)
+    # print('-' * 50)
+    create_comment_on_pr(pr, answer)
+
+
+if __name__ == "__main__":
+    main()

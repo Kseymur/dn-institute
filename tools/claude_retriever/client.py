@@ -38,51 +38,50 @@ ANSWER_PROMPT = """
 
 You are an editor. Perform the following tasks:
 1. Using the information provided within the <fact_checking_results></fact_checking_results> tags, 
-please form the desired output with results of fact-checking. There should be required fields "statement", "source", "result". If the result is False, provide an explanation why. If there is no source, put "None" in the "source" field.
+please form the desired output with results of fact-checking. 
+List each statement from the tags <statement></statement> and accompany it with the fact-checking source 
+between the tags <source></source>.  If there is no source, put "None" in the "source" field.
+If the verdict is True, put the symbol ":white_check_mark:" after the statement.
+If the verdict is False, put the symbol ":x:" after the statement and also provide an explanation why.
+If the verdict is Unverified, put the symbol ":warning:" after the statement.
 Output example:
-{"fact_checking":
-   [
-   {"statement": "In July 2011, BTC-e experienced a security breach.",
-   "source": "https://bitcoinmagazine.com/business/btc-e-attacked-1343738085",
-   "result": "False",
-   "explanation": "BTC-e experienced a security breach in July 2012, not 2011"
-   }
-   ]}
+'''- **Statement**: Squid Game: November 1, 2021 - $5.7m :x:
+  - **Source**: [https://www.wired.co.uk/article/squid-game-crypto-scam](https://www.wired.co.uk/article/squid-game-crypto-scam)
+  - **Explanation**: The article states the Squid Game crypto scam creators pulled out $3.36 million on November 1, 2021, not $5.7 million as the statement claims.'''
+
 2. Make detailed editor's notes on the text in <text></text> tags. 
-Suggest stylistic and grammatical improvements for the text, and point out any error. 
-Put your detailed notes and the list of errors in the field "corrections". 
-The value of this field should be a string.
+Suggest stylistic and grammatical improvements and point out any error in the text between <text></text> tags. 
+Put your detailed notes and the list of errors below the header. 
+Output example:
+'''## Some Editor's Note
+...'''
 
 3. Additionally, since the text between <text></text> is a Markdown document for Hugo SSG, ensure it adheres to specific formatting requirements.
-If it doesn't, give en explanation why in an additional field "explanation".
+If it adheres, put the symbol ":white_check_mark:".
+If does not adhere, put the symbol ":x:" and also provide an explanation why.
 Output example:
-{"hugo_checking": {
-    "verdict": "False",
-    "explanation": ""
-    }
-}
+'''## Hugo SSG Formatting Check
+- Does it match Hugo SSG formatting? :x:
+  - **Explanation**: ...'''
 
 4. Check if the text between <text></text> follows the Markdown format, including appropriate headers.
 Confirm if it meets submission guidelines, particularly the file naming convention ("YYYY-MM-DD-entity-that-was-hacked.md"). Extract the name of the file from the text between <text></text> tags and compare it to the correct name.
 Verify that the text between <text></text> includes only the allowed headers: "## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes".
-Check for the presence of specific metadata headers between "---" lines, such as "date", "target-entities", "entity-types", "attack-types", "title", "loss". The text between <text></text> must contain all and only allowed metadata headers.
-Present your findings in a structured JSON format. 
+Check for the presence of specific metadata headers between "---" lines, such as "date", "target-entities", "entity-types", "attack-types", "title", "loss" in the text within <text></text> tags. It must contain all and only allowed metadata headers.
 Output example:
-{"submission_guidelines": {
-       "article_filename": "bla-bla.md",
-       "correct_filename": "2012-07-16-BTC-e.md",
-       "is_filename_correct": "False",
-       "allowed_headers": ["## Summary", "## Attackers", "## Losses", "## Timeline", "## Security Failure Causes"],   
-       "headers_from_text": "None",   
-       "has_allowed_headers": "False",
-       "allowed_metadata_headers": ["date", "target-entities", "entity-types", "attack-types", "title", "loss"],
-       "metadata_headers_from_text": "None",
-       "has_allowed_metadata_headers": "False"
-       }
-    }
+'''## Filename Check
+- Correct Filename: `2022-02-14-ValentineFloki.md`
+- Your Filename: `scam.md` :x:
 
-Combine the results of all steps into a single JSON and return it to me in <json></json> tags. 
-All quotes in string values must be properly escaped for use with the json.load function in Python. Strictly adhere to the key names.
+## Section Headers Check
+- Allowed Headers: `## Summary, ## Attackers, ## Losses, ## Timeline, ## Security Failure Causes`
+- Your Headers: `# Cryptocurrency Scam Types and Prevention Measures, ## 1. Rug Pull, ### Overview, ### Recognition Tips, ## 2. Honeypot, ### Overview, ### Recognition Tips` :x:
+
+## Metadata Headers Check
+- Allowed Metadata Headers: `date, target-entities, entity-types, attack-types, title, loss`
+- Your Metadata Headers: `date, target-entities, entity-types` :x:'''
+
+Combine the results of all steps into a single output that complies with Markdown format and return it to me in <answer></answer> tags. 
 """
 
 
@@ -214,7 +213,7 @@ class ClientWithRetrieval(Anthropic):
         print("Search results:", search_results)
         answer = self.answer_with_results(search_results, query, model, temperature)
         print("Answer:", answer)
-        json_answer = self.extract_between_tags("json", answer)
+        json_answer = self.extract_between_tags("answer", answer)
         return json_answer
     
 
