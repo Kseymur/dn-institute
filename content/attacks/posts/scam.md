@@ -19,6 +19,8 @@ There are three primary rug pull variants:
 	- *Real World Example*
 		- **AnubisDAO: October 29, 2021 - $60m**
 			- The project claimed to be a fork of OlympusDAO was rugpulled hours before sale round of the Anubis token ends. The liquidity was withdrawn from the Balancer Pool via `exitPool()` function in a [single transaction](https://etherscan.io/tx/0x551890a877c57cf19ddcb312c0a9962029225373daf2815f3720b723bd79b7b0) by [the pool deployer](https://etherscan.io/address/0x872254d530ae8983628cb1eaafc51f78d78c86d9). As a result 13,556.36 ETH was stolen from investors, which was worth roughly $60 million.
+     		- ZeusFinance: May 14, 2023 - $45m
+The project, which was advertised as an innovative DeFi platform offering unprecedented returns, turned out to be a scam. Just moments before the closing of their highly publicized ZEUS token sale, the entire funds were drained. The exploit was executed through a transferFunds() function in a single transaction initiated by the project's main contract. This led to the theft of 20,000 ETH from unsuspecting investors, totaling approximately $45 million at that time.
     
 - **1.3. Massive Token Sale**: A drastic drop in liquidity can also come from massive token sales by the initial creators or large holders. The smart contract might even allow privileged addresses to mint new tokens at will, exacerbating the situation.
 	- *Real World Exapmle*
