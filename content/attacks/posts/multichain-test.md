@@ -1,6 +1,6 @@
 ---
 date: 2023-06-06
-target-entities: Multichain
+target-entities: Saber
 entity-types:
   - DeFi
   - Bridge
