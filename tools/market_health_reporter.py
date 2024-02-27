@@ -10,7 +10,7 @@ from tools.utils import read_file, extract_between_tags
 from tools.report_graphics_tool import Visualization
 
 
-REPO_NAME = "1712n/dn-institute"
+REPO_NAME = "Kseymur/dn-institute"
 SYSTEM_PROMPT_FILE = 'tools/market_health_reporter_doc/prompts/system_prompt.txt'
 HUMAN_PROMPT_FILE = 'tools/market_health_reporter_doc/prompts/prompt1.txt'
 ARTICLE_EXAMPLE_FILE = 'content/market-health/posts/2023-08-14-huobi/index.md'
