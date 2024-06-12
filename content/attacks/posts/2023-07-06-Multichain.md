@@ -45,8 +45,8 @@ Multichain estimated the losses from the hack to be $126 million. The stolen ass
 
 ## Timeline
 
-- **May 21, 2023** [Multichain CEO Zhaojun was taken away by the Chinese police from his home](https://twitter.com/MultichainOrg/status/1679768407628185600). Zhaojun's computers, phones, hardware wallets, and mnemonic phrases were confiscated by the authorities.
-- **July 06, 2023, 04:21:23 PM UTC:** The [first malicious transaction occurred](https://etherscan.io/tx/0xde3eed5656263b85d43a89f1d2f6af8fde0d93e49f4642053164d773507323f8).
+- **2023-05-21** [Multichain CEO Zhaojun was taken away by the Chinese police from his home](https://twitter.com/MultichainOrg/status/1679768407628185600). Zhaojun's computers, phones, hardware wallets, and mnemonic phrases were confiscated by the authorities.
+- **2023-06-06, 04:21:23 PM UTC:** The [first malicious transaction occurred](https://etherscan.io/tx/0xde3eed5656263b85d43a89f1d2f6af8fde0d93e49f4642053164d773507323f8).
 - **July 06, 2023, 06:33:11 PM UTC:** 30 million WBTC [withdrawn](https://etherscan.io/tx/0x448f2a6a6c071cdce254937e06305a033538e1aeb9339227d0e59e0458e6185c) from Multichain bridge.
 - **July 06, 2023, 07:46:23 PM UTC:** Multichain Moonriver bridge [begins](https://etherscan.io/tx/0xf830239f39ff21b8634e28cf3fea730069982478465ee5c3ba8e8706d0cef50f) being drained.
 - **July 06, 2023, 08:05:35 PM UTC:** Multichain Dogechain bridge [begins](https://etherscan.io/tx/0x6bbc867004b4c6650f2b55131955075c4109c32138753147eb142fa431cc84c9) being drained.
