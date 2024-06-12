@@ -1,13 +1,13 @@
 ---
 date: 2023-06-06
-target-entities: Multichain
+target-entities: Saber
 entity-types:
   - DeFi
   - Bridge
 attack-types:
   - Private Key Compromise
 title: "Multichain Bridge Suffers $126 Million Security Breach"
-loss: 126000000
+loss: 125000000
 ---
 
 ## Summary
